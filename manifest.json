@@ -2,7 +2,7 @@
   "name": "Bonus Tracker",
   "short_name": "Bonus",
   "description": "Referral bonus kuzatish ilovasi",
-  "start_url": "/",
+  "start_url": "/bonus-tracker",
   "display": "standalone",
   "background_color": "#0A0E17",
   "theme_color": "#0A0E17",
