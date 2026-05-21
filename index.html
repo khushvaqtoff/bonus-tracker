@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0E17">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bonus Tracker">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Bonus Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #E8B84B;
+  --gold2: #F5D080;
+  --gold-dim: rgba(232,184,75,0.13);
+  --dark: #0A0E17;
+  --card: #111827;
+  --card2: #1A2235;
+  --border: rgba(255,255,255,0.07);
+  --text: #EDF2FF;
+  --muted: #6B7A99;
+  --green: #34D399;
+  --green-dim: rgba(52,211,153,0.12);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.12);
+  --r: 16px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { height:100%; }
+body {
+  height: 100%;
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  background-image: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(232,184,75,0.07) 0%, transparent 70%);
+}
+
+/* ── App shell ── */
+.app { display:flex; flex-direction:column; height:100vh; height:100dvh; }
+
+/* ── Status bar spacer ── */
+.safe-top { height: env(safe-area-inset-top, 0px); background: #0D1320; }
+
+/* ── Header ── */
+.header {
+  background: #0D1320;
+  padding: 14px 18px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.header-left { display:flex; align-items:center; gap:10px; }
+.app-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--gold), #8B6010);
+  border-radius: 10px;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 17px;
+  box-shadow: 0 3px 12px rgba(232,184,75,0.28);
+}
+.app-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px; font-weight: 800;
+  background: linear-gradient(90deg, var(--gold2), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.header-right { display:flex; gap:8px; align-items:center; }
+.icon-btn {
+  width: 34px; height: 34px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 16px; cursor: pointer;
+  transition: background 0.2s;
+}
+.icon-btn:active { background: var(--card); }
+
+/* ── Stats ── */
+.stats {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 8px; padding: 12px 14px 10px;
+  flex-shrink: 0;
+}
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.stat-n { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:var(--gold); line-height:1; }
+.stat-l { font-size:10px; color:var(--muted); margin-top:3px; font-weight:500; }
+
+/* ── Bottom nav ── */
+.bottom-nav {
+  display: flex;
+  background: #0D1320;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  padding-bottom: var(--safe-bottom);
+}
+.nav-btn {
+  flex: 1; padding: 10px 4px 8px;
+  display: flex; flex-direction:column; align-items:center; gap:3px;
+  cursor: pointer; border:none; background:none;
+  transition: all 0.2s;
+}
+.nav-ico { font-size: 20px; }
+.nav-lbl { font-size: 10px; font-weight:600; color: var(--muted); font-family:'DM Sans',sans-serif; }
+.nav-btn.active .nav-lbl { color: var(--gold); }
+.nav-btn.active .nav-ico { filter: drop-shadow(0 0 4px rgba(232,184,75,0.5)); }
+
+/* ── Pages ── */
+.page { display:none; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 14px 16px; }
+.page.active { display:block; }
+.page::-webkit-scrollbar { display:none; }
+
+/* ── Search bar ── */
+.search-wrap { padding: 10px 0 4px; }
+.search-inp {
+  width:100%; background:var(--card);
+  border:1px solid var(--border); border-radius:12px;
+  padding:10px 14px 10px 36px;
+  color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
+  outline:none; transition:border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236B7A99' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.44 1.343a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 12px center;
+}
+.search-inp:focus { border-color:var(--gold); }
+.search-inp::placeholder { color:var(--muted); }
+
+/* ── Referrer card ── */
+.ref-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 15px;
+  margin-bottom: 10px;
+  animation: up 0.3s ease both;
+  position: relative; overflow:hidden;
+  transition: border-color 0.3s;
+}
+.ref-card.complete { border-color: rgba(232,184,75,0.35); }
+.ref-card.complete::after {
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.card-top { display:flex; align-items:center; gap:10px; margin-bottom:11px; }
+.av {
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,#8B6010,var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#0A0E17;
+  flex-shrink:0;
+}
+.cn { font-size:15px;font-weight:600; }
+.cs { font-size:11px;color:var(--muted);margin-top:1px; }
+.cbadge {
+  margin-left:auto;border-radius:20px;padding:3px 9px;
+  font-size:11px;font-weight:600;
+}
+.cbadge.p { background:var(--gold-dim);color:var(--gold);border:1px solid rgba(232,184,75,0.3); }
+.cbadge.d { background:var(--green-dim);color:var(--green);border:1px solid rgba(52,211,153,0.3); }
+.cbadge.paid { background:var(--green-dim);color:var(--green);border:1px solid rgba(52,211,153,0.3); }
+
+/* dots */
+.dlbl { font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px; }
+.dgrid { display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:8px; }
+.dot {
+  aspect-ratio:1;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;cursor:pointer;
+  transition:transform 0.13s;user-select:none;
+}
+.dot.e { background:var(--card2);border:1.5px dashed rgba(255,255,255,0.09);color:rgba(255,255,255,0.12); }
+.dot.f { background:linear-gradient(135deg,#8B6010,var(--gold));color:#0A0E17;box-shadow:0 2px 7px rgba(232,184,75,0.22); }
+.dot:active { transform:scale(0.88); }
+
+.prow { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
+.ptrack { flex:1;height:5px;background:var(--card2);border-radius:99px;overflow:hidden; }
+.pfill { height:100%;border-radius:99px;background:linear-gradient(90deg,#8B6010,var(--gold2));transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.ppct { font-size:12px;font-weight:600;color:var(--gold);min-width:32px;text-align:right; }
+
+.cacts { display:flex;gap:6px; }
+.abtn {
+  flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);
+  background:var(--card2);color:var(--text);
+  font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all 0.2s;text-align:center;
+}
+.abtn:active { transform:scale(0.96); }
+.abtn.g { background:var(--green-dim);border-color:rgba(52,211,153,0.3);color:var(--green); }
+.abtn.r { background:var(--red-dim);border-color:rgba(248,113,113,0.3);color:var(--red); }
+.abtn.gold { background:var(--gold-dim);border-color:rgba(232,184,75,0.3);color:var(--gold); }
+
+/* ── Add page ── */
+.form-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:18px;margin-top:10px;margin-bottom:12px;
+}
+.form-ttl { font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px; }
+.inp {
+  width:100%;background:var(--card2);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;outline:none;
+  margin-bottom:9px;transition:border-color 0.2s;
+}
+.inp:focus { border-color:var(--gold); }
+.inp::placeholder { color:var(--muted); }
+.sbtn {
+  width:100%;background:linear-gradient(135deg,var(--gold),#8B6010);
+  border:none;border-radius:11px;padding:13px;
+  color:#0A0E17;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;margin-top:2px;
+}
+.sbtn:active { transform:scale(0.98); }
+.hint {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:13px;font-size:12px;color:var(--muted);line-height:1.7;
+}
+
+/* ── Stats page ── */
+.big-stat {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:20px;margin-bottom:10px;
+  display:flex;align-items:center;gap:14px;
+}
+.big-ico { font-size:28px; }
+.big-n { font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--gold); }
+.big-l { font-size:12px;color:var(--muted);margin-top:2px; }
+
+.leaders-ttl { font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px; }
+.leader {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;margin-bottom:7px;
+}
+.l-rank { font-family:'Syne',sans-serif;font-size:18px;font-weight:700;min-width:28px;text-align:center; }
+.l-name { font-size:14px;font-weight:600;flex:1; }
+.l-dots { font-size:12px;color:var(--muted); }
+.l-badge { font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px; }
+
+/* ── Empty ── */
+.empty { text-align:center;padding:48px 20px;color:var(--muted); }
+.empty .e-ico { font-size:44px;margin-bottom:12px; }
+.empty p { font-size:14px;line-height:1.6; }
+
+/* ── Toast ── */
+.toast {
+  position:fixed;bottom:80px;left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:12px;padding:9px 18px;
+  font-size:13px;font-weight:600;
+  opacity:0;transition:all 0.28s;pointer-events:none;
+  z-index:999;white-space:nowrap;
+}
+.toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+.toast.gold { border-color:rgba(232,184,75,0.4);color:var(--gold); }
+.toast.green { border-color:rgba(52,211,153,0.4);color:var(--green); }
+
+/* ── Confirm modal ── */
+.overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  display:none;align-items:flex-end;justify-content:center;z-index:500;
+  backdrop-filter:blur(4px);
+}
+.overlay.show { display:flex; }
+.modal {
+  background:#0D1320;border:1px solid var(--border);
+  border-radius:20px 20px 0 0;padding:24px 20px;
+  width:100%;padding-bottom:calc(24px + var(--safe-bottom));
+}
+.modal h3 { font-size:16px;font-weight:700;margin-bottom:8px; }
+.modal p { font-size:13px;color:var(--muted);margin-bottom:20px; }
+.modal-btns { display:flex;gap:8px; }
+.modal-btn {
+  flex:1;padding:13px;border-radius:12px;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;border:none;transition:transform 0.15s;
+}
+.modal-btn:active { transform:scale(0.97); }
+.modal-btn.cancel { background:var(--card2);color:var(--muted); }
+.modal-btn.confirm { background:var(--red-dim);color:var(--red);border:1px solid rgba(248,113,113,0.3); }
+
+@keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="safe-top"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="app-icon">👑</div>
+      <div class="app-name">Bonus Tracker</div>
+    </div>
+    <div class="header-right">
+      <div class="icon-btn" onclick="navTo('search')" title="Qidirish">🔍</div>
+    </div>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="sTot">0</div><div class="stat-l">Tavsiyachi</div></div>
+    <div class="stat"><div class="stat-n" id="sComp">0</div><div class="stat-l">Haqli</div></div>
+    <div class="stat"><div class="stat-n" id="sPaid">0</div><div class="stat-l">To'langan</div></div>
+  </div>
+
+  <!-- Pages -->
+  <div class="page active" id="pg-list">
+    <div id="listContent"></div>
+  </div>
+
+  <div class="page" id="pg-search">
+    <div class="search-wrap">
+      <input class="search-inp" id="searchInp" placeholder="Ism bo'yicha qidirish..." oninput="doSearch()" />
+    </div>
+    <div id="searchContent"></div>
+  </div>
+
+  <div class="page" id="pg-add">
+    <div class="form-card">
+      <div class="form-ttl">✦ Yangi tavsiyachi</div>
+      <input class="inp" id="fName" placeholder="F.I.O. yoki ismi" />
+      <input class="inp" id="fBonus" placeholder="Bonus miqdori (so'm)" type="number" inputmode="numeric" />
+      <input class="inp" id="fNote" placeholder="Izoh (ixtiyoriy)" />
+      <button class="sbtn" onclick="submitAdd()">＋ Qo'shish</button>
+    </div>
+    <div class="hint">
+      💡 Bonus miqdorini aniq kiriting — keyinchalik o'zgartirish mumkin.
+    </div>
+  </div>
+
+  <div class="page" id="pg-stats">
+    <div id="statsContent"></div>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="navTo('list')" id="nav-list">
+      <span class="nav-ico">📋</span><span class="nav-lbl">Ro'yxat</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('search')" id="nav-search">
+      <span class="nav-ico">🔍</span><span class="nav-lbl">Qidirish</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('add')" id="nav-add">
+      <span class="nav-ico">➕</span><span class="nav-lbl">Qo'shish</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('stats')" id="nav-stats">
+      <span class="nav-ico">📊</span><span class="nav-lbl">Statistika</span>
+    </button>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="overlay" id="overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="modalTitle">O'chirishni tasdiqlang</h3>
+    <p id="modalMsg">Bu amalni bekor qilib bo'lmaydi.</p>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal()">Bekor</button>
+      <button class="modal-btn confirm" id="modalConfirm">O'chirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Data ──────────────────────────────────────────────
+function load() {
+  try { return JSON.parse(localStorage.getItem('bonus_data') || '[]'); } catch { return []; }
+}
+function save(d) { localStorage.setItem('bonus_data', JSON.stringify(d)); }
+
+// ── Navigation ────────────────────────────────────────
+let curPage = 'list';
+function navTo(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('pg-' + p).classList.add('active');
+  document.getElementById('nav-' + p)?.classList.add('active');
+  curPage = p;
+  if (p === 'list') renderList();
+  if (p === 'stats') renderStats();
+  if (p === 'search') { document.getElementById('searchInp').focus(); doSearch(); }
+  if (p === 'add') setTimeout(() => document.getElementById('fName').focus(), 100);
+}
+
+// ── Stats strip ───────────────────────────────────────
+function updateStrip() {
+  const d = load();
+  document.getElementById('sTot').textContent = d.length;
+  document.getElementById('sComp').textContent = d.filter(r => r.clients >= 10).length;
+  document.getElementById('sPaid').textContent = d.filter(r => r.paid).length;
+}
+
+// ── Render list ───────────────────────────────────────
+function renderList(data) {
+  const d = data || load();
+  const el = document.getElementById('listContent');
+  if (!d.length) {
+    el.innerHTML = `<div class="empty"><div class="e-ico">✨</div><p>Hali tavsiyachi yo'q.<br>➕ Qo'shish bo'limidan boshlang.</p></div>`;
+    return;
+  }
+  // Sort: incomplete first, then complete unpaid, then paid
+  const sorted = [...d].sort((a,b) => {
+    const va = a.paid?2:a.clients>=10?1:0;
+    const vb = b.paid?2:b.clients>=10?1:0;
+    return va - vb || b.clients - a.clients;
+  });
+  el.innerHTML = sorted.map((r,i) => cardHTML(r,i)).join('');
+  updateStrip();
+}
+
+function initials(name) {
+  return name.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'??';
+}
+
+function cardHTML(r, i) {
+  const n = Math.min(r.clients||0, 10);
+  const done = n >= 10;
+  const pct = n * 10;
+
+  const dots = Array.from({length:10},(_,j) =>
+    `<div class="dot ${j<n?'f':'e'}" onclick="toggleDot('${r.id}',${j})">${j<n?'★':j+1}</div>`
+  ).join('');
+
+  const badge = r.paid
+    ? `<span class="cbadge paid">✓ To'landi</span>`
+    : done ? `<span class="cbadge d">🎉 Haqli</span>`
+    : `<span class="cbadge p">${n}/10</span>`;
+
+  const acts = r.paid ? `
+    <button class="abtn r" onclick="confirmDelete('${r.id}','${r.name}')">🗑 O'chirish</button>
+  ` : done ? `
+    <button class="abtn gold" style="flex:2" onclick="markPaid('${r.id}')">💰 Bonus to'lash</button>
+    <button class="abtn r" onclick="confirmDelete('${r.id}','${r.name}')">🗑</button>
+  ` : `
+    <button class="abtn g" onclick="addC('${r.id}')">＋ Mijoz</button>
+    <button class="abtn" onclick="remC('${r.id}')">− Mijoz</button>
+    <button class="abtn r" onclick="confirmDelete('${r.id}','${r.name}')">🗑</button>
+  `;
+
+  return `<div class="ref-card ${done?'complete':''}" id="c-${r.id}" style="animation-delay:${i*0.04}s">
+    <div class="card-top">
+      <div class="av">${initials(r.name)}</div>
+      <div><div class="cn">${r.name}</div><div class="cs">🎁 ${Number(r.bonus).toLocaleString()} so'm${r.note?` · ${r.note}`:''}</div></div>
+      <div>${badge}</div>
+    </div>
+    <div class="dlbl">Mijozlar — ${n} / 10</div>
+    <div class="dgrid">${dots}</div>
+    <div class="prow">
+      <div class="ptrack"><div class="pfill" style="width:${pct}%"></div></div>
+      <div class="ppct">${pct}%</div>
+    </div>
+    <div class="cacts">${acts}</div>
+  </div>`;
+}
+
+// ── Actions ───────────────────────────────────────────
+function toggleDot(id, idx) {
+  const d = load();
+  const r = d.find(x=>x.id===id);
+  if (!r || r.paid) return;
+  const was = r.clients;
+  r.clients = idx < r.clients ? idx : idx + 1;
+  save(d);
+  if (was < 10 && r.clients >= 10) {
+    showToast(`🎉 ${r.name} 10 ta to'ldirdi!`, 'gold');
+    vibrate([50,30,80]);
+  } else {
+    vibrate([15]);
+  }
+  renderList(); if(curPage==='search') doSearch();
+}
+
+function addC(id) {
+  const d = load();
+  const r = d.find(x=>x.id===id);
+  if (!r || r.clients >= 10 || r.paid) return;
+  r.clients++;
+  save(d);
+  if (r.clients === 10) { showToast(`🎉 ${r.name} 10 ta to'ldirdi!`, 'gold'); vibrate([50,30,80]); }
+  else vibrate([15]);
+  renderList(); if(curPage==='search') doSearch();
+}
+
+function remC(id) {
+  const d = load();
+  const r = d.find(x=>x.id===id);
+  if (!r || r.clients <= 0 || r.paid) return;
+  r.clients--;
+  save(d);
+  vibrate([10]);
+  renderList(); if(curPage==='search') doSearch();
+}
+
+function markPaid(id) {
+  const d = load();
+  const r = d.find(x=>x.id===id);
+  if (!r) return;
+  r.paid = true; r.paidDate = new Date().toLocaleDateString('uz-UZ');
+  save(d);
+  showToast(`💰 ${r.name} ga bonus to'landi!`, 'green');
+  vibrate([30,20,60]);
+  renderList(); if(curPage==='search') doSearch();
+}
+
+// ── Confirm delete ────────────────────────────────────
+let pendingDeleteId = null;
+function confirmDelete(id, name) {
+  pendingDeleteId = id;
+  document.getElementById('modalTitle').textContent = `"${name}" ni o'chirish`;
+  document.getElementById('modalMsg').textContent = "Bu amalni qaytarib bo'lmaydi.";
+  document.getElementById('modalConfirm').onclick = doDelete;
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal() { document.getElementById('overlay').classList.remove('show'); pendingDeleteId=null; }
+function doDelete() {
+  if (!pendingDeleteId) return;
+  let d = load();
+  const r = d.find(x=>x.id===pendingDeleteId);
+  d = d.filter(x=>x.id!==pendingDeleteId);
+  save(d); closeModal();
+  showToast(`🗑 ${r?.name||''} o'chirildi`, '');
+  renderList(); if(curPage==='search') doSearch(); if(curPage==='stats') renderStats();
+}
+
+// ── Add ───────────────────────────────────────────────
+function submitAdd() {
+  const name = document.getElementById('fName').value.trim();
+  const bonus = document.getElementById('fBonus').value.trim();
+  const note = document.getElementById('fNote').value.trim();
+  if (!name) { showToast('❌ Ism kiriting',''); document.getElementById('fName').focus(); return; }
+  if (!bonus || isNaN(bonus)) { showToast('❌ Bonus miqdorini kiriting',''); document.getElementById('fBonus').focus(); return; }
+  const d = load();
+  d.push({ id: Date.now().toString(), name, bonus: Number(bonus), clients:0, paid:false, note, date: new Date().toLocaleDateString('uz-UZ') });
+  save(d);
+  showToast(`✅ ${name} qo'shildi!`, 'green');
+  vibrate([20]);
+  document.getElementById('fName').value='';
+  document.getElementById('fBonus').value='';
+  document.getElementById('fNote').value='';
+  navTo('list');
+}
+
+// ── Search ────────────────────────────────────────────
+function doSearch() {
+  const q = document.getElementById('searchInp').value.trim().toLowerCase();
+  const d = load();
+  const res = q ? d.filter(r=>r.name.toLowerCase().includes(q)) : d;
+  const el = document.getElementById('searchContent');
+  if (!res.length) {
+    el.innerHTML = `<div class="empty"><div class="e-ico">🔍</div><p>${q?`"${q}" topilmadi`:'Qidirish uchun ism yozing'}</p></div>`;
+    return;
+  }
+  el.innerHTML = res.map((r,i)=>cardHTML(r,i)).join('');
+}
+
+// ── Stats page ────────────────────────────────────────
+function renderStats() {
+  const d = load();
+  const total = d.length;
+  const totalClients = d.reduce((s,r)=>s+(r.clients||0),0);
+  const comp = d.filter(r=>r.clients>=10).length;
+  const paid = d.filter(r=>r.paid).length;
+  const totalBonus = d.filter(r=>r.paid).reduce((s,r)=>s+(Number(r.bonus)||0),0);
+  const pending = d.filter(r=>r.clients>=10&&!r.paid).length;
+
+  const leaders = [...d].sort((a,b)=>(b.clients||0)-(a.clients||0)).slice(0,5);
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+
+  const el = document.getElementById('statsContent');
+  el.innerHTML = `
+    <div style="padding-top:10px">
+      <div class="big-stat"><span class="big-ico">👥</span><div><div class="big-n">${total}</div><div class="big-l">Jami tavsiyachilar</div></div></div>
+      <div class="big-stat"><span class="big-ico">🔗</span><div><div class="big-n">${totalClients}</div><div class="big-l">Jalb qilingan mijozlar</div></div></div>
+      <div class="big-stat"><span class="big-ico">🎉</span><div><div class="big-n">${comp}</div><div class="big-l">Bonus haqli (10 ta to'ldirgan)</div></div></div>
+      <div class="big-stat"><span class="big-ico">⏳</span><div><div class="big-n">${pending}</div><div class="big-l">Bonus kutilmoqda</div></div></div>
+      <div class="big-stat"><span class="big-ico">✅</span><div><div class="big-n">${paid}</div><div class="big-l">Bonus to'langan</div></div></div>
+      <div class="big-stat"><span class="big-ico">💰</span><div><div class="big-n">${totalBonus.toLocaleString()}</div><div class="big-l">Jami to'langan bonus (so'm)</div></div></div>
+      ${leaders.length ? `
+        <div class="leaders-ttl">🏆 TOP tavsiyachilar</div>
+        ${leaders.map((r,i)=>`
+          <div class="leader">
+            <div class="l-rank">${medals[i]}</div>
+            <div class="l-name">${r.name}</div>
+            <div class="l-dots">${r.clients}/10</div>
+            ${r.paid?`<span class="l-badge" style="background:var(--green-dim);color:var(--green)">To'landi</span>`:r.clients>=10?`<span class="l-badge" style="background:var(--gold-dim);color:var(--gold)">Haqli</span>`:''}
+          </div>`).join('')}
+      ` : ''}
+    </div>
+  `;
+}
+
+// ── Helpers ───────────────────────────────────────────
+let toastT;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type||'');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ el.className='toast'; }, 2400);
+}
+
+function vibrate(p) {
+  try { navigator.vibrate?.(p); } catch {}
+}
+
+// ── Service Worker (offline) ──────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+// ── Init ─────────────────────────────────────────────
+renderList();
+updateStrip();
+</script>
+</body>
+</html>
