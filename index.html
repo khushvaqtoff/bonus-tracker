@@ -3,631 +3,610 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0A0E17">
+<meta name="theme-color" content="#07090F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Bonus Tracker">
+<meta name="apple-mobile-web-app-title" content="Bonus CRM">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Bonus Tracker</title>
+<title>Bonus CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --gold: #E8B84B;
-  --gold2: #F5D080;
-  --gold-dim: rgba(232,184,75,0.13);
-  --dark: #0A0E17;
-  --card: #111827;
-  --card2: #1A2235;
-  --border: rgba(255,255,255,0.07);
-  --text: #EDF2FF;
-  --muted: #6B7A99;
-  --green: #34D399;
-  --green-dim: rgba(52,211,153,0.12);
-  --red: #F87171;
-  --red-dim: rgba(248,113,113,0.12);
-  --r: 16px;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+:root{
+  --gold:#E9BC52;--gold2:#F7D98A;--gold3:#A07828;
+  --dark:#07090F;--c1:#0D1321;--c2:#131B2E;--c3:#192035;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --text:#E8EEF8;--muted:#5A6A8A;--muted2:#8A9AB8;
+  --green:#2DD4A0;--green-d:rgba(45,212,160,0.1);
+  --red:#F87171;--red-d:rgba(248,113,113,0.1);
+  --blue:#60A5FA;--blue-d:rgba(96,165,250,0.1);
+  --purple:#A78BFA;
+  --safe:env(safe-area-inset-bottom,0px);
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { height:100%; }
-body {
-  height: 100%;
-  background: var(--dark);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  overflow: hidden;
-  background-image: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(232,184,75,0.07) 0%, transparent 70%);
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
+body{background-image:
+  radial-gradient(ellipse 120% 45% at 50% -8%,rgba(233,188,82,0.07) 0%,transparent 55%),
+  radial-gradient(ellipse 60% 40% at 100% 100%,rgba(96,165,250,0.04) 0%,transparent 50%)}
 
-/* ── App shell ── */
-.app { display:flex; flex-direction:column; height:100vh; height:100dvh; }
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.safe-top{height:env(safe-area-inset-top,0px);background:#0A0F1C;flex-shrink:0}
 
-/* ── Status bar spacer ── */
-.safe-top { height: env(safe-area-inset-top, 0px); background: #0D1320; }
+/* HEADER */
+.header{background:rgba(10,15,28,0.97);backdrop-filter:blur(12px);padding:12px 16px 10px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid var(--border)}
+.hlogo{display:flex;align-items:center;gap:10px}
+.hico{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold3));
+  display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 16px rgba(233,188,82,0.25)}
+.hname{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;
+  background:linear-gradient(90deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hright{display:flex;gap:7px}
+.hbtn{height:32px;padding:0 11px;border-radius:8px;background:var(--c2);border:1px solid var(--border2);
+  color:var(--muted2);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;
+  display:flex;align-items:center;gap:5px;transition:all .2s}
+.hbtn:active{transform:scale(.96)}
+.hbtn.gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#07090F;border:none;font-weight:700}
 
-/* ── Header ── */
-.header {
-  background: #0D1320;
-  padding: 14px 18px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
-}
-.header-left { display:flex; align-items:center; gap:10px; }
-.app-icon {
-  width: 34px; height: 34px;
-  background: linear-gradient(135deg, var(--gold), #8B6010);
-  border-radius: 10px;
-  display: flex; align-items:center; justify-content:center;
-  font-size: 17px;
-  box-shadow: 0 3px 12px rgba(232,184,75,0.28);
-}
-.app-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 17px; font-weight: 800;
-  background: linear-gradient(90deg, var(--gold2), var(--gold));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.header-right { display:flex; gap:8px; align-items:center; }
-.icon-btn {
-  width: 34px; height: 34px;
-  background: var(--card2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  display: flex; align-items:center; justify-content:center;
-  font-size: 16px; cursor: pointer;
-  transition: background 0.2s;
-}
-.icon-btn:active { background: var(--card); }
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px 12px 8px;flex-shrink:0}
+.sbox{background:var(--c1);border:1px solid var(--border);border-radius:12px;padding:9px 6px;text-align:center;position:relative;overflow:hidden}
+.sbox::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:.7}
+.sbox.s1::before{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.sbox.s2::before{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.sbox.s3::before{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.sbox.s4::before{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
+.sn{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;line-height:1}
+.sbox.s1 .sn{color:var(--gold)}.sbox.s2 .sn{color:var(--green)}.sbox.s3 .sn{color:var(--blue)}.sbox.s4 .sn{color:var(--purple)}
+.sl{font-size:9px;color:var(--muted);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
 
-/* ── Stats ── */
-.stats {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 8px; padding: 12px 14px 10px;
-  flex-shrink: 0;
-}
-.stat {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 10px 8px;
-  text-align: center;
-}
-.stat-n { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:var(--gold); line-height:1; }
-.stat-l { font-size:10px; color:var(--muted); margin-top:3px; font-weight:500; }
+/* TABS */
+.tabs{display:flex;padding:0 12px 8px;gap:5px;flex-shrink:0}
+.tab{flex:1;padding:7px 4px;border-radius:9px;border:1px solid var(--border);background:var(--c1);
+  color:var(--muted);font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;text-align:center}
+.tab.on{background:linear-gradient(135deg,rgba(233,188,82,.15),rgba(233,188,82,.04));border-color:rgba(233,188,82,.3);color:var(--gold)}
 
-/* ── Bottom nav ── */
-.bottom-nav {
-  display: flex;
-  background: #0D1320;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-  padding-bottom: var(--safe-bottom);
-}
-.nav-btn {
-  flex: 1; padding: 10px 4px 8px;
-  display: flex; flex-direction:column; align-items:center; gap:3px;
-  cursor: pointer; border:none; background:none;
-  transition: all 0.2s;
-}
-.nav-ico { font-size: 20px; }
-.nav-lbl { font-size: 10px; font-weight:600; color: var(--muted); font-family:'DM Sans',sans-serif; }
-.nav-btn.active .nav-lbl { color: var(--gold); }
-.nav-btn.active .nav-ico { filter: drop-shadow(0 0 4px rgba(232,184,75,0.5)); }
+/* FILTER */
+.filterbar{padding:0 12px 8px;display:flex;gap:6px;flex-shrink:0}
+.finp{flex:1;background:var(--c1);border:1px solid var(--border);border-radius:10px;
+  padding:8px 12px 8px 32px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;
+  outline:none;transition:border-color .2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='%235A6A8A' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:10px center}
+.finp:focus{border-color:var(--gold)}
+.finp::placeholder{color:var(--muted)}
+.fsel{background:var(--c1);border:1px solid var(--border);border-radius:10px;
+  padding:8px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-size:11px;outline:none;cursor:pointer;max-width:100px}
 
-/* ── Pages ── */
-.page { display:none; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 14px 16px; }
-.page.active { display:block; }
-.page::-webkit-scrollbar { display:none; }
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;padding:0 12px 80px;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
 
-/* ── Search bar ── */
-.search-wrap { padding: 10px 0 4px; }
-.search-inp {
-  width:100%; background:var(--card);
-  border:1px solid var(--border); border-radius:12px;
-  padding:10px 14px 10px 36px;
-  color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
-  outline:none; transition:border-color 0.2s;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236B7A99' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.44 1.343a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: 12px center;
-}
-.search-inp:focus { border-color:var(--gold); }
-.search-inp::placeholder { color:var(--muted); }
-
-/* ── Referrer card ── */
-.ref-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px;
-  margin-bottom: 10px;
-  animation: up 0.3s ease both;
-  position: relative; overflow:hidden;
-  transition: border-color 0.3s;
-}
-.ref-card.complete { border-color: rgba(232,184,75,0.35); }
-.ref-card.complete::after {
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-}
-.card-top { display:flex; align-items:center; gap:10px; margin-bottom:11px; }
-.av {
-  width:40px;height:40px;border-radius:12px;
-  background:linear-gradient(135deg,#8B6010,var(--gold));
+/* CARD */
+.ccard{background:var(--c1);border:1px solid var(--border);border-radius:16px;margin-bottom:8px;overflow:hidden;animation:up .3s ease both;transition:border-color .3s}
+.ccard.vip{border-color:rgba(233,188,82,.3)}
+.ccard.vip .ctop{background:linear-gradient(135deg,rgba(233,188,82,.05),transparent)}
+.ctop{padding:12px 14px 10px;cursor:pointer;user-select:none}
+.crow1{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.av{width:38px;height:38px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold3),var(--gold));
   display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#0A0E17;
-  flex-shrink:0;
-}
-.cn { font-size:15px;font-weight:600; }
-.cs { font-size:11px;color:var(--muted);margin-top:1px; }
-.cbadge {
-  margin-left:auto;border-radius:20px;padding:3px 9px;
-  font-size:11px;font-weight:600;
-}
-.cbadge.p { background:var(--gold-dim);color:var(--gold);border:1px solid rgba(232,184,75,0.3); }
-.cbadge.d { background:var(--green-dim);color:var(--green);border:1px solid rgba(52,211,153,0.3); }
-.cbadge.paid { background:var(--green-dim);color:var(--green);border:1px solid rgba(52,211,153,0.3); }
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#07090F}
+.cname{font-size:14px;font-weight:600;flex:1;min-width:0}
+.cname small{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:1px}
+.cbadges{display:flex;gap:4px;flex-shrink:0}
+.badge{border-radius:6px;padding:3px 7px;font-size:10px;font-weight:700}
+.b-pend{background:rgba(233,188,82,.1);color:var(--gold);border:1px solid rgba(233,188,82,.2)}
+.b-done{background:var(--green-d);color:var(--green);border:1px solid rgba(45,212,160,.2)}
+.b-paid{background:var(--green-d);color:var(--green);border:1px solid rgba(45,212,160,.2)}
+.cmeta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.mtag{display:inline-flex;align-items:center;gap:3px;background:var(--c2);border:1px solid var(--border);
+  border-radius:6px;padding:2px 7px;font-size:10px;color:var(--muted2);white-space:nowrap}
 
-/* dots */
-.dlbl { font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px; }
-.dgrid { display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:8px; }
-.dot {
-  aspect-ratio:1;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;cursor:pointer;
-  transition:transform 0.13s;user-select:none;
-}
-.dot.e { background:var(--card2);border:1.5px dashed rgba(255,255,255,0.09);color:rgba(255,255,255,0.12); }
-.dot.f { background:linear-gradient(135deg,#8B6010,var(--gold));color:#0A0E17;box-shadow:0 2px 7px rgba(232,184,75,0.22); }
-.dot:active { transform:scale(0.88); }
+/* DOTS */
+.dlbl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.dgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:6px}
+.dot{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;user-select:none;pointer-events:none}
+.dot.e{background:var(--c3);border:1.5px dashed rgba(255,255,255,.07);color:rgba(255,255,255,.09)}
+.dot.f{background:linear-gradient(135deg,var(--gold3),var(--gold));color:#07090F;box-shadow:0 1px 5px rgba(233,188,82,.2)}
+.prow{display:flex;align-items:center;gap:8px}
+.ptrack{flex:1;height:4px;background:var(--c3);border-radius:99px;overflow:hidden}
+.pfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold3),var(--gold2));
+  transition:width .4s cubic-bezier(.34,1.56,.64,1)}
+.ppct{font-size:10px;font-weight:700;color:var(--gold);min-width:28px;text-align:right}
 
-.prow { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
-.ptrack { flex:1;height:5px;background:var(--card2);border-radius:99px;overflow:hidden; }
-.pfill { height:100%;border-radius:99px;background:linear-gradient(90deg,#8B6010,var(--gold2));transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-.ppct { font-size:12px;font-weight:600;color:var(--gold);min-width:32px;text-align:right; }
+/* ACTIONS */
+.cacts{padding:0 14px 11px;display:flex;gap:5px}
+.abtn{flex:1;padding:8px 4px;border-radius:9px;border:1px solid var(--border);
+  background:var(--c2);color:var(--text);font-size:11px;font-weight:600;
+  font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;transition:all .18s}
+.abtn:active{transform:scale(.94)}
+.abtn.g{background:var(--green-d);border-color:rgba(45,212,160,.22);color:var(--green)}
+.abtn.r{background:var(--red-d);border-color:rgba(248,113,113,.22);color:var(--red)}
+.abtn.gold{background:rgba(233,188,82,.1);border-color:rgba(233,188,82,.28);color:var(--gold)}
 
-.cacts { display:flex;gap:6px; }
-.abtn {
-  flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);
-  background:var(--card2);color:var(--text);
-  font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;
-  cursor:pointer;transition:all 0.2s;text-align:center;
-}
-.abtn:active { transform:scale(0.96); }
-.abtn.g { background:var(--green-dim);border-color:rgba(52,211,153,0.3);color:var(--green); }
-.abtn.r { background:var(--red-dim);border-color:rgba(248,113,113,0.3);color:var(--red); }
-.abtn.gold { background:var(--gold-dim);border-color:rgba(232,184,75,0.3);color:var(--gold); }
+/* ADD FORM */
+.aform{background:var(--c1);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px}
+.attl{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.2px;
+  margin-bottom:14px;text-align:center;display:flex;align-items:center;gap:8px}
+.attl::before,.attl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(233,188,82,.25))}
+.attl::after{background:linear-gradient(270deg,transparent,rgba(233,188,82,.25))}
+.inp{width:100%;background:var(--c2);border:1px solid var(--border);border-radius:9px;
+  padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;
+  outline:none;margin-bottom:8px;transition:border-color .2s}
+.inp:focus{border-color:var(--gold)}
+.inp::placeholder{color:var(--muted)}
+.irow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sbtn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold3));
+  border:none;border-radius:10px;padding:12px;color:#07090F;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s;margin-top:4px}
+.sbtn:active{transform:scale(.98)}
+.hint{background:var(--c1);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:11px;color:var(--muted);line-height:1.8}
 
-/* ── Add page ── */
-.form-card {
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:18px;margin-top:10px;margin-bottom:12px;
-}
-.form-ttl { font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px; }
-.inp {
-  width:100%;background:var(--card2);border:1px solid var(--border);
-  border-radius:10px;padding:12px 14px;color:var(--text);
-  font-family:'DM Sans',sans-serif;font-size:14px;outline:none;
-  margin-bottom:9px;transition:border-color 0.2s;
-}
-.inp:focus { border-color:var(--gold); }
-.inp::placeholder { color:var(--muted); }
-.sbtn {
-  width:100%;background:linear-gradient(135deg,var(--gold),#8B6010);
-  border:none;border-radius:11px;padding:13px;
-  color:#0A0E17;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
-  cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;margin-top:2px;
-}
-.sbtn:active { transform:scale(0.98); }
-.hint {
-  background:var(--card);border:1px solid var(--border);
-  border-radius:12px;padding:13px;font-size:12px;color:var(--muted);line-height:1.7;
-}
+/* STATS PAGE */
+.spage{padding-top:8px}
+.bigstat{background:var(--c1);border:1px solid var(--border);border-radius:14px;
+  padding:13px;margin-bottom:7px;display:flex;align-items:center;gap:12px}
+.bico{font-size:22px;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bico.g{background:rgba(233,188,82,.1)}.bico.gr{background:var(--green-d)}.bico.b{background:var(--blue-d)}.bico.p{background:rgba(167,139,250,.1)}
+.bn{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1}
+.bl{font-size:11px;color:var(--muted);margin-top:2px}
+.ltop{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px}
+.lrow{background:var(--c1);border:1px solid var(--border);border-radius:12px;
+  padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.lrank{font-family:'Syne',sans-serif;font-size:15px;min-width:24px;text-align:center}
+.linfo{flex:1;min-width:0}
+.lname2{font-size:13px;font-weight:600}
+.lsub{font-size:10px;color:var(--muted);margin-top:1px}
+.lbadge{font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;white-space:nowrap}
 
-/* ── Stats page ── */
-.big-stat {
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:20px;margin-bottom:10px;
-  display:flex;align-items:center;gap:14px;
-}
-.big-ico { font-size:28px; }
-.big-n { font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--gold); }
-.big-l { font-size:12px;color:var(--muted);margin-top:2px; }
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty .ei{font-size:40px;margin-bottom:12px}
+.empty p{font-size:13px;line-height:1.7}
 
-.leaders-ttl { font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px; }
-.leader {
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;padding:12px 14px;
-  display:flex;align-items:center;gap:12px;margin-bottom:7px;
-}
-.l-rank { font-family:'Syne',sans-serif;font-size:18px;font-weight:700;min-width:28px;text-align:center; }
-.l-name { font-size:14px;font-weight:600;flex:1; }
-.l-dots { font-size:12px;color:var(--muted); }
-.l-badge { font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px; }
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;
+  align-items:flex-end;justify-content:center;z-index:500;backdrop-filter:blur(6px)}
+.overlay.show{display:flex}
 
-/* ── Empty ── */
-.empty { text-align:center;padding:48px 20px;color:var(--muted); }
-.empty .e-ico { font-size:44px;margin-bottom:12px; }
-.empty p { font-size:14px;line-height:1.6; }
+.modal{background:var(--c1);border:1px solid var(--border2);border-radius:20px 20px 0 0;
+  padding:20px 18px;width:100%;padding-bottom:calc(20px + var(--safe))}
+.mico{font-size:40px;text-align:center;margin-bottom:8px}
+.mttl{font-size:15px;font-weight:700;margin-bottom:5px;text-align:center}
+.mmsg{font-size:12px;color:var(--muted);margin-bottom:18px;text-align:center;line-height:1.6}
+.mname{color:var(--gold);font-weight:700}
+.mbtns{display:flex;gap:8px}
+.mbtn{flex:1;padding:12px;border-radius:11px;font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;border:none;transition:transform .15s}
+.mbtn:active{transform:scale(.97)}
+.mbtn.cancel{background:var(--c2);color:var(--muted2)}
+.mbtn.green{background:var(--green-d);color:var(--green);border:1px solid rgba(45,212,160,.3)}
+.mbtn.danger{background:var(--red-d);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.mbtn.gold2{background:rgba(233,188,82,.12);color:var(--gold);border:1px solid rgba(233,188,82,.3)}
 
-/* ── Toast ── */
-.toast {
-  position:fixed;bottom:80px;left:50%;
-  transform:translateX(-50%) translateY(8px);
-  background:var(--card2);border:1px solid var(--border);
-  border-radius:12px;padding:9px 18px;
-  font-size:13px;font-weight:600;
-  opacity:0;transition:all 0.28s;pointer-events:none;
-  z-index:999;white-space:nowrap;
-}
-.toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
-.toast.gold { border-color:rgba(232,184,75,0.4);color:var(--gold); }
-.toast.green { border-color:rgba(52,211,153,0.4);color:var(--green); }
+/* DETAIL */
+.dmodal{background:var(--c1);border:1px solid var(--border2);border-radius:20px 20px 0 0;
+  padding:20px 18px;width:100%;max-height:82vh;overflow-y:auto;padding-bottom:calc(24px + var(--safe))}
+.dmodal::-webkit-scrollbar{display:none}
+.dttl{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.drow{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.drow:last-child{border-bottom:none}
+.dico2{font-size:15px;width:26px;text-align:center;flex-shrink:0;padding-top:1px}
+.dlbl2{font-size:10px;color:var(--muted);margin-bottom:1px}
+.dval{font-size:13px;font-weight:600}
 
-/* ── Confirm modal ── */
-.overlay {
-  position:fixed;inset:0;background:rgba(0,0,0,0.7);
-  display:none;align-items:flex-end;justify-content:center;z-index:500;
-  backdrop-filter:blur(4px);
-}
-.overlay.show { display:flex; }
-.modal {
-  background:#0D1320;border:1px solid var(--border);
-  border-radius:20px 20px 0 0;padding:24px 20px;
-  width:100%;padding-bottom:calc(24px + var(--safe-bottom));
-}
-.modal h3 { font-size:16px;font-weight:700;margin-bottom:8px; }
-.modal p { font-size:13px;color:var(--muted);margin-bottom:20px; }
-.modal-btns { display:flex;gap:8px; }
-.modal-btn {
-  flex:1;padding:13px;border-radius:12px;
-  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
-  cursor:pointer;border:none;transition:transform 0.15s;
-}
-.modal-btn:active { transform:scale(0.97); }
-.modal-btn.cancel { background:var(--card2);color:var(--muted); }
-.modal-btn.confirm { background:var(--red-dim);color:var(--red);border:1px solid rgba(248,113,113,0.3); }
+/* TOAST */
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:var(--c2);border:1px solid var(--border2);border-radius:10px;
+  padding:8px 16px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;
+  pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.gold{border-color:rgba(233,188,82,.4);color:var(--gold)}
+.toast.green{border-color:rgba(45,212,160,.4);color:var(--green)}
 
-@keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="safe-top"></div>
+<div class="safe-top"></div>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-left">
-      <div class="app-icon">👑</div>
-      <div class="app-name">Bonus Tracker</div>
-    </div>
-    <div class="header-right">
-      <div class="icon-btn" onclick="navTo('search')" title="Qidirish">🔍</div>
-    </div>
+<div class="header">
+  <div class="hlogo">
+    <div class="hico">👑</div>
+    <div class="hname">Bonus CRM</div>
   </div>
-
-  <!-- Stats strip -->
-  <div class="stats">
-    <div class="stat"><div class="stat-n" id="sTot">0</div><div class="stat-l">Tavsiyachi</div></div>
-    <div class="stat"><div class="stat-n" id="sComp">0</div><div class="stat-l">Haqli</div></div>
-    <div class="stat"><div class="stat-n" id="sPaid">0</div><div class="stat-l">To'langan</div></div>
-  </div>
-
-  <!-- Pages -->
-  <div class="page active" id="pg-list">
-    <div id="listContent"></div>
-  </div>
-
-  <div class="page" id="pg-search">
-    <div class="search-wrap">
-      <input class="search-inp" id="searchInp" placeholder="Ism bo'yicha qidirish..." oninput="doSearch()" />
-    </div>
-    <div id="searchContent"></div>
-  </div>
-
-  <div class="page" id="pg-add">
-    <div class="form-card">
-      <div class="form-ttl">✦ Yangi tavsiyachi</div>
-      <input class="inp" id="fName" placeholder="F.I.O. yoki ismi" />
-      <input class="inp" id="fBonus" placeholder="Bonus miqdori (so'm)" type="number" inputmode="numeric" />
-      <input class="inp" id="fNote" placeholder="Izoh (ixtiyoriy)" />
-      <button class="sbtn" onclick="submitAdd()">＋ Qo'shish</button>
-    </div>
-    <div class="hint">
-      💡 Bonus miqdorini aniq kiriting — keyinchalik o'zgartirish mumkin.
-    </div>
-  </div>
-
-  <div class="page" id="pg-stats">
-    <div id="statsContent"></div>
-  </div>
-
-  <!-- Bottom nav -->
-  <div class="bottom-nav">
-    <button class="nav-btn active" onclick="navTo('list')" id="nav-list">
-      <span class="nav-ico">📋</span><span class="nav-lbl">Ro'yxat</span>
-    </button>
-    <button class="nav-btn" onclick="navTo('search')" id="nav-search">
-      <span class="nav-ico">🔍</span><span class="nav-lbl">Qidirish</span>
-    </button>
-    <button class="nav-btn" onclick="navTo('add')" id="nav-add">
-      <span class="nav-ico">➕</span><span class="nav-lbl">Qo'shish</span>
-    </button>
-    <button class="nav-btn" onclick="navTo('stats')" id="nav-stats">
-      <span class="nav-ico">📊</span><span class="nav-lbl">Statistika</span>
-    </button>
+  <div class="hright">
+    <button class="hbtn" onclick="exportCSV()">📥 CSV</button>
+    <button class="hbtn gold" onclick="navTo('add')">＋ Yangi</button>
   </div>
 </div>
 
-<!-- Confirm modal -->
-<div class="overlay" id="overlay" onclick="closeModal()">
+<div class="stats">
+  <div class="sbox s1"><div class="sn" id="st1">0</div><div class="sl">Jami</div></div>
+  <div class="sbox s2"><div class="sn" id="st2">0</div><div class="sl">Haqli</div></div>
+  <div class="sbox s3"><div class="sn" id="st3">0</div><div class="sl">Faol</div></div>
+  <div class="sbox s4"><div class="sn" id="st4">0</div><div class="sl">To'langan</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="navTo('list')">📋 Ro'yxat</button>
+  <button class="tab" onclick="navTo('add')">➕ Yangi</button>
+  <button class="tab" onclick="navTo('stats')">📊 Tahlil</button>
+</div>
+
+<div class="filterbar" id="filterBar">
+  <input class="finp" id="searchInp" placeholder="Qidirish..." oninput="renderList()">
+  <select class="fsel" id="agentFil" onchange="renderList()">
+    <option value="">Barcha agent</option>
+  </select>
+  <select class="fsel" id="statusFil" onchange="renderList()">
+    <option value="">Hammasi</option>
+    <option value="active">Faol</option>
+    <option value="done">Haqli</option>
+    <option value="paid">To'langan</option>
+  </select>
+</div>
+
+<div class="scroll" id="pgList"></div>
+<div class="scroll" id="pgAdd" style="display:none"></div>
+<div class="scroll" id="pgStats" style="display:none"></div>
+</div>
+
+<!-- UNIVERSAL CONFIRM MODAL -->
+<div class="overlay" id="confirmOverlay">
   <div class="modal" onclick="event.stopPropagation()">
-    <h3 id="modalTitle">O'chirishni tasdiqlang</h3>
-    <p id="modalMsg">Bu amalni bekor qilib bo'lmaydi.</p>
-    <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeModal()">Bekor</button>
-      <button class="modal-btn confirm" id="modalConfirm">O'chirish</button>
+    <div class="mico" id="cIco">✅</div>
+    <div class="mttl" id="cTtl">Tasdiqlang</div>
+    <div class="mmsg" id="cMsg">Davom etasizmi?</div>
+    <div class="mbtns">
+      <button class="mbtn cancel" onclick="closeConfirm()">❌ Bekor</button>
+      <button class="mbtn" id="cOkBtn" onclick="doConfirm()">✅ Ha</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
+<!-- DETAIL MODAL -->
+<div class="overlay" id="doverlay" onclick="closeDModal()">
+  <div class="dmodal" onclick="event.stopPropagation()">
+    <div id="dmodalContent"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Data ──────────────────────────────────────────────
-function load() {
-  try { return JSON.parse(localStorage.getItem('bonus_data') || '[]'); } catch { return []; }
-}
-function save(d) { localStorage.setItem('bonus_data', JSON.stringify(d)); }
+// ── Data ─────────────────────────────────────────────
+function load(){try{return JSON.parse(localStorage.getItem('bcrm')||'[]')}catch{return[]}}
+function save(d){localStorage.setItem('bcrm',JSON.stringify(d))}
 
-// ── Navigation ────────────────────────────────────────
-let curPage = 'list';
-function navTo(p) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('pg-' + p).classList.add('active');
-  document.getElementById('nav-' + p)?.classList.add('active');
-  curPage = p;
-  if (p === 'list') renderList();
-  if (p === 'stats') renderStats();
-  if (p === 'search') { document.getElementById('searchInp').focus(); doSearch(); }
-  if (p === 'add') setTimeout(() => document.getElementById('fName').focus(), 100);
+// ── Universal confirm ─────────────────────────────────
+let _cb=null;
+function ask(ico,ttl,msg,btnClass,btnTxt,cb){
+  _cb=cb;
+  document.getElementById('cIco').textContent=ico;
+  document.getElementById('cTtl').textContent=ttl;
+  document.getElementById('cMsg').innerHTML=msg;
+  const btn=document.getElementById('cOkBtn');
+  btn.className='mbtn '+btnClass;
+  btn.textContent=btnTxt;
+  document.getElementById('confirmOverlay').classList.add('show');
+  vib([20]);
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('show');_cb=null}
+function doConfirm(){const cb=_cb;closeConfirm();cb&&cb()}
+
+// ── Nav ───────────────────────────────────────────────
+function navTo(p){
+  ['list','add','stats'].forEach(x=>{
+    document.getElementById('pg'+x[0].toUpperCase()+x.slice(1)).style.display=x===p?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('on',['list','add','stats'][i]===p);
+  });
+  document.getElementById('filterBar').style.display=p==='list'?'flex':'none';
+  if(p==='list')renderList();
+  if(p==='add')renderAdd();
+  if(p==='stats')renderStats();
 }
 
 // ── Stats strip ───────────────────────────────────────
-function updateStrip() {
-  const d = load();
-  document.getElementById('sTot').textContent = d.length;
-  document.getElementById('sComp').textContent = d.filter(r => r.clients >= 10).length;
-  document.getElementById('sPaid').textContent = d.filter(r => r.paid).length;
+function updateStrip(){
+  const d=load();
+  document.getElementById('st1').textContent=d.length;
+  document.getElementById('st2').textContent=d.filter(r=>r.clients>=10&&!r.paid).length;
+  document.getElementById('st3').textContent=d.filter(r=>r.clients<10).length;
+  document.getElementById('st4').textContent=d.filter(r=>r.paid).length;
+  const agents=[...new Set(d.map(r=>r.agent).filter(Boolean))];
+  const sel=document.getElementById('agentFil');const cur=sel.value;
+  sel.innerHTML='<option value="">Barcha agent</option>'+
+    agents.map(a=>`<option value="${esc(a)}" ${a===cur?'selected':''}>${esc(a)}</option>`).join('');
 }
 
 // ── Render list ───────────────────────────────────────
-function renderList(data) {
-  const d = data || load();
-  const el = document.getElementById('listContent');
-  if (!d.length) {
-    el.innerHTML = `<div class="empty"><div class="e-ico">✨</div><p>Hali tavsiyachi yo'q.<br>➕ Qo'shish bo'limidan boshlang.</p></div>`;
+function renderList(){
+  updateStrip();
+  const d=load();
+  const q=document.getElementById('searchInp').value.trim().toLowerCase();
+  const ag=document.getElementById('agentFil').value;
+  const st=document.getElementById('statusFil').value;
+  let f=d.filter(r=>{
+    if(q&&!r.name.toLowerCase().includes(q)&&!r.workplace?.toLowerCase().includes(q)&&!r.agent?.toLowerCase().includes(q))return false;
+    if(ag&&r.agent!==ag)return false;
+    if(st==='active'&&r.clients>=10)return false;
+    if(st==='done'&&!(r.clients>=10&&!r.paid))return false;
+    if(st==='paid'&&!r.paid)return false;
+    return true;
+  });
+  f.sort((a,b)=>{
+    const va=a.paid?2:a.clients>=10?1:0,vb=b.paid?2:b.clients>=10?1:0;
+    return va-vb||b.clients-a.clients;
+  });
+  const el=document.getElementById('pgList');
+  if(!f.length){
+    el.innerHTML=`<div class="empty"><div class="ei">🔍</div><p>${q||ag||st?'Natija topilmadi':'Hali tavsiyachi qo\'shilmagan.<br>➕ Yangi tugmasini bosing.'}</p></div>`;
     return;
   }
-  // Sort: incomplete first, then complete unpaid, then paid
-  const sorted = [...d].sort((a,b) => {
-    const va = a.paid?2:a.clients>=10?1:0;
-    const vb = b.paid?2:b.clients>=10?1:0;
-    return va - vb || b.clients - a.clients;
-  });
-  el.innerHTML = sorted.map((r,i) => cardHTML(r,i)).join('');
-  updateStrip();
+  el.innerHTML=f.map((r,i)=>cardHTML(r,i)).join('');
 }
 
-function initials(name) {
-  return name.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'??';
-}
+function ini(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'??'}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
-function cardHTML(r, i) {
-  const n = Math.min(r.clients||0, 10);
-  const done = n >= 10;
-  const pct = n * 10;
-
-  const dots = Array.from({length:10},(_,j) =>
-    `<div class="dot ${j<n?'f':'e'}" onclick="toggleDot('${r.id}',${j})">${j<n?'★':j+1}</div>`
+function cardHTML(r,i){
+  const n=Math.min(r.clients||0,10),done=n>=10,pct=n*10;
+  const dots=Array.from({length:10},(_,j)=>
+    `<div class="dot ${j<n?'f':'e'}">${j<n?'★':j+1}</div>`
   ).join('');
+  const badge=r.paid?`<span class="badge b-paid">✓</span>`:done?`<span class="badge b-done">🎉</span>`:`<span class="badge b-pend">${n}/10</span>`;
+  const meta=[
+    r.workplace?`<span class="mtag">🏢 ${esc(r.workplace)}</span>`:'',
+    r.agent?`<span class="mtag">👤 ${esc(r.agent)}</span>`:'',
+    r.date?`<span class="mtag">📅 ${esc(r.date)}</span>`:'',
+  ].filter(Boolean).join('');
 
-  const badge = r.paid
-    ? `<span class="cbadge paid">✓ To'landi</span>`
-    : done ? `<span class="cbadge d">🎉 Haqli</span>`
-    : `<span class="cbadge p">${n}/10</span>`;
+  // ACTION BUTTONS — har biri o'z tasdiqlashiga ega
+  let acts='';
+  if(r.paid){
+    acts=`<button class="abtn r" onclick="askDel('${r.id}','${esc(r.name)}')">🗑 O'chirish</button>`;
+  } else if(done){
+    acts=`
+      <button class="abtn gold" style="flex:2" onclick="askPay('${r.id}','${esc(r.name)}','${Number(r.bonus||0).toLocaleString()}')">💰 Bonus to'lash</button>
+      <button class="abtn r" onclick="askDel('${r.id}','${esc(r.name)}')">🗑</button>`;
+  } else {
+    acts=`
+      <button class="abtn g" onclick="askAdd('${r.id}','${esc(r.name)}',${n})">➕ Mijoz qo'sh</button>
+      <button class="abtn r" onclick="askRem('${r.id}','${esc(r.name)}',${n})">➖ Mijoz o'chir</button>
+      <button class="abtn" style="flex:0.5;font-size:14px" onclick="askDel('${r.id}','${esc(r.name)}')">🗑</button>`;
+  }
 
-  const acts = r.paid ? `
-    <button class="abtn r" onclick="confirmDelete('${r.id}','${r.name}')">🗑 O'chirish</button>
-  ` : done ? `
-    <button class="abtn gold" style="flex:2" onclick="markPaid('${r.id}')">💰 Bonus to'lash</button>
-    <button class="abtn r" onclick="confirmDelete('${r.id}','${r.name}')">🗑</button>
-  ` : `
-    <button class="abtn g" onclick="addC('${r.id}')">＋ Mijoz</button>
-    <button class="abtn" onclick="remC('${r.id}')">− Mijoz</button>
-    <button class="abtn r" onclick="confirmDelete('${r.id}','${r.name}')">🗑</button>
-  `;
-
-  return `<div class="ref-card ${done?'complete':''}" id="c-${r.id}" style="animation-delay:${i*0.04}s">
-    <div class="card-top">
-      <div class="av">${initials(r.name)}</div>
-      <div><div class="cn">${r.name}</div><div class="cs">🎁 ${Number(r.bonus).toLocaleString()} so'm${r.note?` · ${r.note}`:''}</div></div>
-      <div>${badge}</div>
-    </div>
-    <div class="dlbl">Mijozlar — ${n} / 10</div>
-    <div class="dgrid">${dots}</div>
-    <div class="prow">
-      <div class="ptrack"><div class="pfill" style="width:${pct}%"></div></div>
-      <div class="ppct">${pct}%</div>
+  return`<div class="ccard ${done||r.paid?'vip':''}" id="c-${r.id}" style="animation-delay:${i*.04}s">
+    <div class="ctop" onclick="showDetail('${r.id}')">
+      <div class="crow1">
+        <div class="av">${ini(r.name)}</div>
+        <div class="cname">${esc(r.name)}<small>🎁 ${Number(r.bonus||0).toLocaleString()} so'm</small></div>
+        <div class="cbadges">${badge}</div>
+      </div>
+      ${meta?`<div class="cmeta">${meta}</div>`:''}
+      <div class="dlbl">Mijozlar — ${n} / 10</div>
+      <div class="dgrid">${dots}</div>
+      <div class="prow"><div class="ptrack"><div class="pfill" style="width:${pct}%"></div></div><div class="ppct">${pct}%</div></div>
     </div>
     <div class="cacts">${acts}</div>
   </div>`;
 }
 
-// ── Actions ───────────────────────────────────────────
-function toggleDot(id, idx) {
-  const d = load();
-  const r = d.find(x=>x.id===id);
-  if (!r || r.paid) return;
-  const was = r.clients;
-  r.clients = idx < r.clients ? idx : idx + 1;
-  save(d);
-  if (was < 10 && r.clients >= 10) {
-    showToast(`🎉 ${r.name} 10 ta to'ldirdi!`, 'gold');
-    vibrate([50,30,80]);
-  } else {
-    vibrate([15]);
-  }
-  renderList(); if(curPage==='search') doSearch();
+// ── TASDIQLASH FUNKSIYALARI ───────────────────────────
+
+// Mijoz QO'SHISH tasdiqlash
+function askAdd(id,name,cur){
+  const next=cur+1;
+  ask('➕',
+    `Mijoz qo'shish`,
+    `<b class="mname">${name}</b><br>${cur} → <b style="color:var(--green)">${next}</b> mijoz${next===10?'<br><br>🎉 <b>10 taga yetadi!</b>':''}`,
+    'green','✅ Ha, qo\'shish',
+    ()=>doAdd(id)
+  );
 }
 
-function addC(id) {
-  const d = load();
-  const r = d.find(x=>x.id===id);
-  if (!r || r.clients >= 10 || r.paid) return;
-  r.clients++;
-  save(d);
-  if (r.clients === 10) { showToast(`🎉 ${r.name} 10 ta to'ldirdi!`, 'gold'); vibrate([50,30,80]); }
-  else vibrate([15]);
-  renderList(); if(curPage==='search') doSearch();
+// Mijoz O'CHIRISH tasdiqlash
+function askRem(id,name,cur){
+  if(cur<=0){showToast('❌ Mijoz yo\'q','');return}
+  ask('➖',
+    `Mijoz o'chirish`,
+    `<b class="mname">${name}</b><br>${cur} → <b style="color:var(--red)">${cur-1}</b> mijoz`,
+    'danger','➖ Ha, o\'chirish',
+    ()=>doRem(id)
+  );
 }
 
-function remC(id) {
-  const d = load();
-  const r = d.find(x=>x.id===id);
-  if (!r || r.clients <= 0 || r.paid) return;
-  r.clients--;
-  save(d);
-  vibrate([10]);
-  renderList(); if(curPage==='search') doSearch();
+// BONUS TO'LASH tasdiqlash
+function askPay(id,name,bonus){
+  ask('💰',
+    `Bonus to'lash`,
+    `<b class="mname">${name}</b><br>ga <b style="color:var(--gold)">${bonus} so'm</b> bonus to'langanini tasdiqlang`,
+    'gold2','✅ To\'landi',
+    ()=>doPay(id)
+  );
 }
 
-function markPaid(id) {
-  const d = load();
-  const r = d.find(x=>x.id===id);
-  if (!r) return;
-  r.paid = true; r.paidDate = new Date().toLocaleDateString('uz-UZ');
-  save(d);
-  showToast(`💰 ${r.name} ga bonus to'landi!`, 'green');
-  vibrate([30,20,60]);
-  renderList(); if(curPage==='search') doSearch();
+// O'CHIRISH tasdiqlash
+function askDel(id,name){
+  ask('🗑',
+    `O'chirishni tasdiqlang`,
+    `<b class="mname">${name}</b> ro'yxatdan butunlay o'chiriladi.<br><br>Bu amalni qaytarib bo'lmaydi!`,
+    'danger','🗑 O\'chirish',
+    ()=>doDel(id)
+  );
 }
 
-// ── Confirm delete ────────────────────────────────────
-let pendingDeleteId = null;
-function confirmDelete(id, name) {
-  pendingDeleteId = id;
-  document.getElementById('modalTitle').textContent = `"${name}" ni o'chirish`;
-  document.getElementById('modalMsg').textContent = "Bu amalni qaytarib bo'lmaydi.";
-  document.getElementById('modalConfirm').onclick = doDelete;
-  document.getElementById('overlay').classList.add('show');
-}
-function closeModal() { document.getElementById('overlay').classList.remove('show'); pendingDeleteId=null; }
-function doDelete() {
-  if (!pendingDeleteId) return;
-  let d = load();
-  const r = d.find(x=>x.id===pendingDeleteId);
-  d = d.filter(x=>x.id!==pendingDeleteId);
-  save(d); closeModal();
-  showToast(`🗑 ${r?.name||''} o'chirildi`, '');
-  renderList(); if(curPage==='search') doSearch(); if(curPage==='stats') renderStats();
+// ── AMALLAR ──────────────────────────────────────────
+function doAdd(id){
+  const d=load();const r=d.find(x=>x.id===id);if(!r||r.clients>=10||r.paid)return;
+  r.clients++;save(d);
+  if(r.clients===10){showToast(`🎉 ${r.name} 10 ta to'ldirdi!`,'gold');vib([50,30,80])}
+  else{showToast(`✅ Mijoz qo'shildi (${r.clients}/10)`,'green');vib([20])}
+  renderList();
 }
 
-// ── Add ───────────────────────────────────────────────
-function submitAdd() {
-  const name = document.getElementById('fName').value.trim();
-  const bonus = document.getElementById('fBonus').value.trim();
-  const note = document.getElementById('fNote').value.trim();
-  if (!name) { showToast('❌ Ism kiriting',''); document.getElementById('fName').focus(); return; }
-  if (!bonus || isNaN(bonus)) { showToast('❌ Bonus miqdorini kiriting',''); document.getElementById('fBonus').focus(); return; }
-  const d = load();
-  d.push({ id: Date.now().toString(), name, bonus: Number(bonus), clients:0, paid:false, note, date: new Date().toLocaleDateString('uz-UZ') });
+function doRem(id){
+  const d=load();const r=d.find(x=>x.id===id);if(!r||r.clients<=0||r.paid)return;
+  r.clients--;save(d);
+  showToast(`➖ Mijoz o'chirildi (${r.clients}/10)`,'');vib([20]);
+  renderList();
+}
+
+function doPay(id){
+  const d=load();const r=d.find(x=>x.id===id);if(!r)return;
+  r.paid=true;r.paidDate=new Date().toLocaleDateString('uz-UZ');save(d);
+  showToast(`💰 ${r.name} ga bonus to'landi!`,'green');vib([30,20,60]);
+  renderList();
+}
+
+function doDel(id){
+  let d=load();const r=d.find(x=>x.id===id);
+  d=d.filter(x=>x.id!==id);save(d);
+  showToast(`🗑 ${r?.name||''} o'chirildi`,'');
+  renderList();
+}
+
+// ── DETAIL MODAL ──────────────────────────────────────
+function showDetail(id){
+  const d=load();const r=d.find(x=>x.id===id);if(!r)return;
+  const n=Math.min(r.clients||0,10);
+  const rows=[
+    ['🎁','Bonus',`${Number(r.bonus||0).toLocaleString()} so'm`],
+    ['🏢','Ish joyi / Manzil',r.workplace||'—'],
+    ['💼','Lavozimi',r.position||'—'],
+    ['👤','Agent (kim orqali keldi)',r.agent||'—'],
+    ['📅','Sana',r.date||'—'],
+    ['📊','Mijozlar',`${n} / 10`],
+    ['📌','Holat',r.paid?'✅ Bonus to\'landi':n>=10?'🎉 Bonus haqli':`⏳ ${n}/10 mijoz`],
+    r.note?['📝','Izoh',r.note]:null,
+  ].filter(Boolean);
+  document.getElementById('dmodalContent').innerHTML=`
+    <div class="dttl">
+      <div class="av" style="width:34px;height:34px;font-size:12px;border-radius:9px">${ini(r.name)}</div>
+      ${esc(r.name)}
+    </div>
+    ${rows.map(([ico,lbl,val])=>`
+      <div class="drow">
+        <div class="dico2">${ico}</div>
+        <div><div class="dlbl2">${lbl}</div><div class="dval">${esc(String(val))}</div></div>
+      </div>`).join('')}
+  `;
+  document.getElementById('doverlay').classList.add('show');
+}
+function closeDModal(){document.getElementById('doverlay').classList.remove('show')}
+
+// ── ADD FORM ──────────────────────────────────────────
+function renderAdd(){
+  const today=new Date().toLocaleDateString('uz-UZ',{day:'2-digit',month:'2-digit',year:'numeric'});
+  document.getElementById('pgAdd').innerHTML=`
+    <div class="aform" style="margin-top:8px">
+      <div class="attl">Yangi tavsiyachi</div>
+      <input class="inp" id="fName" placeholder="F.I.O. *"/>
+      <div class="irow">
+        <input class="inp" id="fBonus" placeholder="Bonus (so'm) *" type="number" inputmode="numeric"/>
+        <input class="inp" id="fDate" value="${today}" placeholder="Sana"/>
+      </div>
+      <input class="inp" id="fWorkplace" placeholder="🏢 Ish joyi / Manzil"/>
+      <input class="inp" id="fPosition" placeholder="💼 Lavozimi"/>
+      <input class="inp" id="fAgent" placeholder="👤 Qaysi agent orqali keldi"/>
+      <input class="inp" id="fNote" placeholder="📝 Izoh (ixtiyoriy)"/>
+      <button class="sbtn" onclick="submitAdd()">＋ Qo'shish</button>
+    </div>
+    <div class="hint">
+      ⭐ <b style="color:var(--text)">Eslatma:</b> 10 ta mijoz topib kelganda bonus belgilanadi.<br>
+      🔒 Har bir ➕ ➖ amali tasdiqlash so'raydi — xato bosishdan himoyalangan.
+    </div>
+  `;
+  setTimeout(()=>document.getElementById('fName')?.focus(),100);
+}
+
+function submitAdd(){
+  const name=document.getElementById('fName')?.value.trim();
+  const bonus=document.getElementById('fBonus')?.value.trim();
+  const date=document.getElementById('fDate')?.value.trim();
+  const workplace=document.getElementById('fWorkplace')?.value.trim();
+  const position=document.getElementById('fPosition')?.value.trim();
+  const agent=document.getElementById('fAgent')?.value.trim();
+  const note=document.getElementById('fNote')?.value.trim();
+  if(!name){showToast('❌ F.I.O. kiriting','');return}
+  if(!bonus||isNaN(bonus)){showToast('❌ Bonus miqdorini kiriting','');return}
+  const d=load();
+  d.push({id:Date.now().toString(),name,bonus:Number(bonus),
+    date:date||new Date().toLocaleDateString('uz-UZ'),
+    workplace,position,agent,note,clients:0,paid:false});
   save(d);
-  showToast(`✅ ${name} qo'shildi!`, 'green');
-  vibrate([20]);
-  document.getElementById('fName').value='';
-  document.getElementById('fBonus').value='';
-  document.getElementById('fNote').value='';
+  showToast(`✅ ${name} qo'shildi!`,'green');vib([20]);
   navTo('list');
 }
 
-// ── Search ────────────────────────────────────────────
-function doSearch() {
-  const q = document.getElementById('searchInp').value.trim().toLowerCase();
-  const d = load();
-  const res = q ? d.filter(r=>r.name.toLowerCase().includes(q)) : d;
-  const el = document.getElementById('searchContent');
-  if (!res.length) {
-    el.innerHTML = `<div class="empty"><div class="e-ico">🔍</div><p>${q?`"${q}" topilmadi`:'Qidirish uchun ism yozing'}</p></div>`;
-    return;
-  }
-  el.innerHTML = res.map((r,i)=>cardHTML(r,i)).join('');
+// ── STATS ─────────────────────────────────────────────
+function renderStats(){
+  const d=load();
+  const total=d.length,totalC=d.reduce((s,r)=>s+(r.clients||0),0);
+  const done=d.filter(r=>r.clients>=10&&!r.paid).length;
+  const paid=d.filter(r=>r.paid).length;
+  const totalB=d.filter(r=>r.paid).reduce((s,r)=>s+Number(r.bonus||0),0);
+  const agMap={};d.forEach(r=>{const a=r.agent||'Noma\'lum';agMap[a]=(agMap[a]||0)+1});
+  const agents=Object.entries(agMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const leaders=[...d].sort((a,b)=>(b.clients||0)-(a.clients||0)).slice(0,5);
+  const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+  document.getElementById('pgStats').innerHTML=`<div class="spage">
+    <div class="bigstat"><div class="bico g">👥</div><div><div class="bn" style="color:var(--gold)">${total}</div><div class="bl">Jami tavsiyachilar</div></div></div>
+    <div class="bigstat"><div class="bico gr">🔗</div><div><div class="bn" style="color:var(--green)">${totalC}</div><div class="bl">Jalb qilingan mijozlar</div></div></div>
+    <div class="bigstat"><div class="bico b">🎉</div><div><div class="bn" style="color:var(--blue)">${done}</div><div class="bl">Bonus kutilmoqda</div></div></div>
+    <div class="bigstat"><div class="bico p">✅</div><div><div class="bn" style="color:var(--purple)">${paid}</div><div class="bl">Bonus to'langan</div></div></div>
+    <div class="bigstat"><div class="bico g">💰</div><div><div class="bn" style="color:var(--gold)">${totalB.toLocaleString()}</div><div class="bl">Jami to'langan bonus (so'm)</div></div></div>
+    ${agents.length?`<div class="ltop">👤 Agentlar reytingi</div>
+      ${agents.map(([a,c],i)=>`<div class="lrow">
+        <div class="lrank">${medals[i]||'·'}</div>
+        <div class="linfo"><div class="lname2">${esc(a)}</div><div class="lsub">${c} ta tavsiyachi</div></div>
+        <span class="lbadge" style="background:var(--blue-d);color:var(--blue)">${c} kishi</span>
+      </div>`).join('')}`:''}
+    ${leaders.length?`<div class="ltop">🏆 Top tavsiyachilar</div>
+      ${leaders.map((r,i)=>`<div class="lrow">
+        <div class="lrank">${medals[i]}</div>
+        <div class="linfo">
+          <div class="lname2">${esc(r.name)}</div>
+          <div class="lsub">${r.agent?'👤 '+esc(r.agent)+' · ':''}${r.date||''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;font-weight:700;color:var(--gold);font-family:'Syne',sans-serif">${r.clients}/10</div>
+          ${r.paid?`<span class="lbadge" style="background:var(--green-d);color:var(--green)">To'landi</span>`:r.clients>=10?`<span class="lbadge" style="background:rgba(233,188,82,.1);color:var(--gold)">Haqli</span>`:''}
+        </div>
+      </div>`).join('')}`:''}
+  </div>`;
 }
 
-// ── Stats page ────────────────────────────────────────
-function renderStats() {
-  const d = load();
-  const total = d.length;
-  const totalClients = d.reduce((s,r)=>s+(r.clients||0),0);
-  const comp = d.filter(r=>r.clients>=10).length;
-  const paid = d.filter(r=>r.paid).length;
-  const totalBonus = d.filter(r=>r.paid).reduce((s,r)=>s+(Number(r.bonus)||0),0);
-  const pending = d.filter(r=>r.clients>=10&&!r.paid).length;
-
-  const leaders = [...d].sort((a,b)=>(b.clients||0)-(a.clients||0)).slice(0,5);
-  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-
-  const el = document.getElementById('statsContent');
-  el.innerHTML = `
-    <div style="padding-top:10px">
-      <div class="big-stat"><span class="big-ico">👥</span><div><div class="big-n">${total}</div><div class="big-l">Jami tavsiyachilar</div></div></div>
-      <div class="big-stat"><span class="big-ico">🔗</span><div><div class="big-n">${totalClients}</div><div class="big-l">Jalb qilingan mijozlar</div></div></div>
-      <div class="big-stat"><span class="big-ico">🎉</span><div><div class="big-n">${comp}</div><div class="big-l">Bonus haqli (10 ta to'ldirgan)</div></div></div>
-      <div class="big-stat"><span class="big-ico">⏳</span><div><div class="big-n">${pending}</div><div class="big-l">Bonus kutilmoqda</div></div></div>
-      <div class="big-stat"><span class="big-ico">✅</span><div><div class="big-n">${paid}</div><div class="big-l">Bonus to'langan</div></div></div>
-      <div class="big-stat"><span class="big-ico">💰</span><div><div class="big-n">${totalBonus.toLocaleString()}</div><div class="big-l">Jami to'langan bonus (so'm)</div></div></div>
-      ${leaders.length ? `
-        <div class="leaders-ttl">🏆 TOP tavsiyachilar</div>
-        ${leaders.map((r,i)=>`
-          <div class="leader">
-            <div class="l-rank">${medals[i]}</div>
-            <div class="l-name">${r.name}</div>
-            <div class="l-dots">${r.clients}/10</div>
-            ${r.paid?`<span class="l-badge" style="background:var(--green-dim);color:var(--green)">To'landi</span>`:r.clients>=10?`<span class="l-badge" style="background:var(--gold-dim);color:var(--gold)">Haqli</span>`:''}
-          </div>`).join('')}
-      ` : ''}
-    </div>
-  `;
+// ── EXPORT ────────────────────────────────────────────
+function exportCSV(){
+  const d=load();
+  if(!d.length){showToast('❌ Ma\'lumot yo\'q','');return}
+  const rows=[['F.I.O.','Ish joyi','Lavozimi','Agent','Sana','Bonus (so\'m)','Mijozlar','Holat']];
+  d.forEach(r=>rows.push([r.name,r.workplace||'',r.position||'',r.agent||'',r.date||'',r.bonus,r.clients,
+    r.paid?'To\'landi':r.clients>=10?'Haqli':'Faol']));
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='bonus-crm-'+new Date().toLocaleDateString('uz-UZ').replace(/\./g,'-')+'.csv';
+  a.click();showToast('📥 CSV yuklab olindi','green');
 }
 
-// ── Helpers ───────────────────────────────────────────
-let toastT;
-function showToast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show ' + (type||'');
-  clearTimeout(toastT);
-  toastT = setTimeout(()=>{ el.className='toast'; }, 2400);
+// ── HELPERS ───────────────────────────────────────────
+let _tt;
+function showToast(msg,type){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show '+(type||'');
+  clearTimeout(_tt);_tt=setTimeout(()=>{el.className='toast'},2400);
 }
+function vib(p){try{navigator.vibrate?.(p)}catch{}}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
-function vibrate(p) {
-  try { navigator.vibrate?.(p); } catch {}
-}
-
-// ── Service Worker (offline) ──────────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
-
-// ── Init ─────────────────────────────────────────────
-renderList();
-updateStrip();
+navTo('list');
 </script>
 </body>
 </html>
